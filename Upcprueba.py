@@ -41,15 +41,23 @@ st.metric(
     delta=f"{fila['Incremento (%)']}%"
 )
 
-# Gráfico general
+# --- Gráfico general (sin color_continuous_scale para máxima compatibilidad) ---
 fig = px.bar(
     df,
     x="Distrito",
     y="Incremento (%)",
     color="Incremento (%)",
-    color_continuous_scale="Blues",
     title="Incremento del nivel de seguridad por distrito (2024 → 2025)"
 )
+
+# Mejorar diseño visual
+fig.update_layout(
+    xaxis_title="Distrito",
+    yaxis_title="Incremento (%)",
+    title_x=0.5,
+    template="plotly_white"
+)
+
 st.plotly_chart(fig, use_container_width=True)
 
 st.caption("📊 Datos simulados — versión demostrativa")
