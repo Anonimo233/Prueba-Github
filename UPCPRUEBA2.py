@@ -56,12 +56,5 @@ st.subheader("📊 Visualización general")
 
 # Mostrar gráficos lado a lado
 col_g1, col_g2 = st.columns(2)
-col_g1.plotly_chart(fig_bar, use_container_width=True)
-col_g2.plotly_chart(fig_pie, use_container_width=True)
 
-# --- DATOS DETALLADOS ---
-with st.expander("📋 Ver tabla de datos simulados"):
-    st.dataframe(df, use_container_width=True)
-
-st.caption("📊 Datos simulados — versión demostrativa educativa")
 
