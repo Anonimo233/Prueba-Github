@@ -53,7 +53,7 @@ st.metric(
 
 
 # --- VISUALIZACIÓN GENERAL (Matplotlib, versión robusta) ---
-import matplotlib.pyplot as plt
+
 import numpy as np
 
 st.subheader("📊 Visualización general")
