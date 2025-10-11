@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import random
-import plotly.express as px
 
 # Configuración de la página
 st.set_page_config(page_title="Seguridad en Lima Metropolitana", page_icon="🛡️", layout="centered")
