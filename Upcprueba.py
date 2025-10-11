@@ -1,3 +1,4 @@
+requirements.txt
 import streamlit as st
 import pandas as pd
 import random
@@ -15,34 +16,34 @@ distritos = [
     "Ate", "Santiago de Surco", "Callao", "Los Olivos"
 ]
 
-# 🔹 Generar datos aleatorios simulados
-seg_2024 = [random.randint(40, 80) for _ in distritos]
-seg_2025 = [random.randint(50, 95) for _ in distritos]
+# Generar datos simulados
+seguridad_2024 = [random.randint(40, 80) for _ in distritos]
+seguridad_2025 = [random.randint(50, 95) for _ in distritos]
 
 # Crear DataFrame
 df = pd.DataFrame({
     "Distrito": distritos,
-    "Seguridad_2024": seg_2024,
-    "Seguridad_2025": seg_2025
+    "Seguridad_2024": seguridad_2024,
+    "Seguridad_2025": seguridad_2025
 })
 
 # Calcular incremento porcentual
 df["Incremento (%)"] = ((df["Seguridad_2025"] - df["Seguridad_2024"]) / df["Seguridad_2024"] * 100).round(1)
 
-# 🔹 Selector de distrito
+# Selector de distrito
 distrito_sel = st.selectbox("Selecciona un distrito:", df["Distrito"])
 
-# Fila del distrito seleccionado
+# Fila seleccionada
 fila = df[df["Distrito"] == distrito_sel].iloc[0]
 
-# Mostrar métrica con delta
+# Mostrar métrica
 st.metric(
     label=f"Índice de seguridad 2025 en {distrito_sel}",
     value=f"{fila['Seguridad_2025']}/100",
     delta=f"{fila['Incremento (%)']}%"
 )
 
-# 🔹 Gráfico de barras
+# Gráfico general
 fig = px.bar(
     df,
     x="Distrito",
@@ -53,5 +54,4 @@ fig = px.bar(
 )
 st.plotly_chart(fig, use_container_width=True)
 
-# Pie de página
 st.caption("📊 Datos simulados — versión demostrativa")
