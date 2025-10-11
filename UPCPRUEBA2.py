@@ -52,37 +52,3 @@ st.metric(
 )
 
 
-# --- VISUALIZACIÓN GENERAL (versión estable sin errores) ---
-import numpy as np
-import pandas as pd
-
-st.subheader("📊 Visualización general")
-
-# Verificar tipos numéricos
-df["Tecnología 2024"] = pd.to_numeric(df["Tecnología 2024"], errors="coerce").fillna(0)
-df["Tecnología 2025"] = pd.to_numeric(df["Tecnología 2025"], errors="coerce").fillna(0)
-
-# Crear posiciones numéricas para las barras
-x = np.arange(len(df))
-width = 0.35
-
-# Etiquetas y formato
-ax.set_xticks(x)
-ax.set_xticklabels(df["Distrito"], rotation=45, ha="right", fontsize=9)
-ax.set_ylabel("Nivel tecnológico (0 - 100)")
-ax.set_title("Nivel tecnológico en distritos de Lima Metropolitana (2024 vs 2025)")
-ax.legend()
-ax.grid(axis="y", linestyle="--", alpha=0.5)
-
-# Ajuste visual y render en Streamlit
-plt.tight_layout()
-st.pyplot(fig)
-
-# Promedios e incremento
-prom_2024 = df["Tecnología 2024"].mean()
-prom_2025 = df["Tecnología 2025"].mean()
-incremento = ((prom_2025 - prom_2024) / prom_2024) * 100 if prom_2024 != 0 else 0
-
-# Texto debajo del gráfico
-st.markdown(f"📈 **Incremento promedio general:** {incremento:.1f}% entre 2024 y 2025.")
-st.markdown(f"💡 En promedio, los distritos mejoraron de **{prom_2024:.1f}/100** a **{prom_2025:.1f}/100**.")
