@@ -57,7 +57,6 @@ st.metric(
 st.subheader("📊 Visualización general")
 
 # Crear figura y ejes
-fig, ax = plt.subplots(figsize=(8, 4))
 ax.bar(df["Distrito"], df["Tecnología 2024"], width=0.4, label="2024", color="#636EFA")
 ax.bar(df["Distrito"], df["Tecnología 2025"], width=0.4, label="2025", color="#00CC96", alpha=0.8)
 
