@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import random
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 # --- CONFIGURACIÓN DE LA PÁGINA ---
 st.set_page_config(page_title="Tecnología en Lima Metropolitana", page_icon="💻", layout="wide")
 
@@ -21,7 +24,8 @@ distritos = [
     "Lima Cercado", "Miraflores", "San Isidro", "La Molina", "Comas",
     "San Juan de Lurigancho", "San Martín de Porres", "Villa El Salvador",
     "Ate", "Santiago de Surco", "Callao", "Los Olivos", "Chorrillos",
-    "Surquillo", "Barranco", "Magdalena del Mar", "Pueblo Libre", "Jesús María"
+    "Surquillo", "Barranco", "Magdalena del Mar", "Pueblo Libre", "Jesús María",
+    "Lince", "San Borja", "Breña", "Pueblo Libre", "San Miguel"
 ]
 # Aseguramos que los valores no superen 100 y haya un incremento razonable
 tec_2024 = [random.randint(30, 80) for _ in distritos]
@@ -46,26 +50,37 @@ with col2:
     st.metric("Promedio 2025", f"{df['Nivel Tecnológico 2025'].mean():.1f}/100")
     st.progress(df['Nivel Tecnológico 2025'].mean() / 100)
 with col3:
+    # Asegurarse de que el delta_color se muestre correctamente
     st.metric("Incremento Promedio", f"{df['Incremento Relativo (%)'].mean():.1f}%",
-              delta=f"{df['Incremento Relativo (%)'].mean():.1f}%", delta_color="normal")
+              delta=f"{df['Incremento Relativo (%)'].mean():.1f}%") # No siempre es bueno forzar 'normal', a veces 'inverse' o 'off'
 
 st.write("---")
 
-# --- VISUALIZACIÓN DE DATOS ---
+# --- VISUALIZACIÓN DE DATOS con Matplotlib/Seaborn ---
 st.header("📈 Comparativa Tecnológica por Distrito")
 
-# Gráfico de barras interactivo
-fig = px.bar(
-    df.sort_values(by="Nivel Tecnológico 2025", ascending=False), # Ordenar para mejor visualización
+# Crear un DataFrame 'derretido' para Seaborn, si se quiere un gráfico de barras apiladas o agrupadas
+df_melted = df.melt(id_vars="Distrito", var_name="Año", value_vars=["Nivel Tecnológico 2024", "Nivel Tecnológico 2025"],
+                    value_name="Nivel Tecnológico")
+
+# Crear el gráfico de barras agrupadas con Seaborn
+plt.figure(figsize=(12, 6))
+sns.barplot(
+    data=df_melted,
     x="Distrito",
-    y=["Nivel Tecnológico 2024", "Nivel Tecnológico 2025"],
-    title="Nivel de Uso de Tecnología (2024 vs 2025)",
-    labels={"value": "Nivel Tecnológico (/100)", "variable": "Año"},
-    barmode="group",
-    height=500,
-    color_discrete_map={"Nivel Tecnológico 2024": "#636EFA", "Nivel Tecnológico 2025": "#EF553B"}
+    y="Nivel Tecnológico",
+    hue="Año",
+    palette="viridis", # Puedes cambiar la paleta de colores
+    order=df.sort_values(by="Nivel Tecnológico 2025", ascending=False)["Distrito"] # Ordenar por 2025
 )
-st.plotly_chart(fig, use_container_width=True)
+plt.ylabel("Nivel Tecnológico (/100)")
+plt.xlabel("Distrito")
+plt.title("Nivel de Uso de Tecnología (2024 vs 2025)")
+plt.xticks(rotation=45, ha='right') # Rotar etiquetas para que no se superpongan
+plt.ylim(0, 100) # Asegurar que el eje Y vaya de 0 a 100
+plt.tight_layout() # Ajustar el diseño para evitar recortes
+st.pyplot(plt) # Mostrar el gráfico en Streamlit
+plt.close() # Importante para liberar memoria y evitar que se muestren gráficos duplicados
 
 st.write("---")
 
@@ -93,7 +108,7 @@ if distrito_sel:
         st.metric(
             label="Incremento Relativo",
             value=f"{fila['Incremento Relativo (%)']}%",
-            delta=f"{fila['Incremento Relativo (%)']}%", delta_color="normal"
+            delta=f"{fila['Incremento Relativo (%)']}%"
         )
 
     # Gráfico de progreso para el distrito seleccionado
@@ -118,6 +133,10 @@ sort_order = st.radio("Orden:", ("Ascendente", "Descendente"))
 sorted_df = df.sort_values(by=sort_column, ascending=(sort_order == "Ascendente"))
 
 st.dataframe(sorted_df, use_container_width=True)
+
+# Puedes añadir una imagen o un pie de página
+st.write("---")
+st.markdown("Desarrollado con ❤️ en Python y Streamlit")
 
 # Puedes añadir una imagen o un pie de página
 st.write("---")
