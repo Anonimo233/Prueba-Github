@@ -42,7 +42,6 @@ st.metric(
 )
 
 # Gráfico general
-fig = px.bar(
     df,
     x="Distrito",
     y="Incremento (%)",
