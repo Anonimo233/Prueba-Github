@@ -54,17 +54,6 @@ st.metric(
 # --- VISUALIZACIONES ---
 st.subheader("📊 Visualización general")
 
-# Gráfico de barras comparativo
-fig_bar = px.bar(
-    df.melt(id_vars="Distrito", value_vars=["Tecnología 2024", "Tecnología 2025"], var_name="Año", value_name="Nivel"),
-    x="Distrito",
-    y="Nivel",
-    color="Año",
-    barmode="group",
-    title="Comparativa del nivel tecnológico 2024 vs 2025 por distrito"
-)
-fig_bar.update_layout(title_x=0.5, template="plotly_white")
-
 # Gráfico circular (promedios)
 fig_pie = px.pie(
     names=["Tecnología 2024", "Tecnología 2025"],
