@@ -106,11 +106,22 @@ st.write("---")
 st.header("📋 Datos Completos")
 st.write("Explora la tabla interactiva de todos los distritos.")
 
-# Opciones de ordenamiento
+# Opciones de ordenamiento: queremos todas las columnas excepto "Distrito"
+# Crear una lista con los nombres de las columnas que queremos permitir para ordenar
+sortable_columns_options = [col for col in df.columns if col != "Distrito"]
+
+# Determinar el índice predeterminado.
+# Buscamos la posición de "Incremento Relativo (%)" en nuestra lista `sortable_columns_options`
+try:
+    default_sort_index = sortable_columns_options.index("Incremento Relativo (%)")
+except ValueError:
+    # Si por alguna razón no se encuentra, usamos la primera opción disponible
+    default_sort_index = 0
+
 sort_column = st.selectbox(
     "Ordenar por:",
-    df.columns[1:],
-    index=df.columns.get_loc("Incremento Relativo (%)")
+    options=sortable_columns_options, # Aquí pasamos la lista de opciones para el selectbox
+    index=default_sort_index         # Y aquí su índice predeterminado
 )
 sort_order = st.radio("Orden:", ("Ascendente", "Descendente"))
 
