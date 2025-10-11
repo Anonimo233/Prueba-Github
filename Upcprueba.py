@@ -40,15 +40,3 @@ st.metric(
     value=f"{fila['Seguridad_2025']}/100",
     delta=f"{fila['Incremento (%)']}%"
 )
-
-# Mejorar diseño visual
-fig.update_layout(
-    xaxis_title="Distrito",
-    yaxis_title="Incremento (%)",
-    title_x=0.5,
-    template="plotly_white"
-)
-
-st.plotly_chart(fig, use_container_width=True)
-
-st.caption("📊 Datos simulados — versión demostrativa")
