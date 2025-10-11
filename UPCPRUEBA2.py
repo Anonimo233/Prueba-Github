@@ -53,7 +53,6 @@ st.metric(
 
 
 # --- VISUALIZACIÓN GENERAL (versión sin Plotly) ---
-import matplotlib.pyplot as plt
 
 st.subheader("📊 Visualización general")
 
