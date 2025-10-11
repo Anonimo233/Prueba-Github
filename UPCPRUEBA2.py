@@ -66,9 +66,6 @@ df["Tecnología 2025"] = pd.to_numeric(df["Tecnología 2025"], errors="coerce").
 x = np.arange(len(df))
 width = 0.35
 
-# Crear la figura y los ejes
-fig, ax = plt.subplots(figsize=(10, 5))
-
 # Dibujar las barras
 ax.bar(x - width/2, df["Tecnología 2024"], width, label="2024", color="#1f77b4")
 ax.bar(x + width/2, df["Tecnología 2025"], width, label="2025", color="#2ca02c")
