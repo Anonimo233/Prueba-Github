@@ -36,9 +36,12 @@ df = pd.DataFrame({
 })
 
 df["Incremento Absoluto"] = df["Nivel Tecnológico 2025"] - df["Nivel Tecnológico 2024"]
-# Asegurarse de que el cálculo no divida por cero si Nivel Tecnológico 2024 es 0 (poco probable aquí)
-df["Incremento Relativo (%)"] = ((df["Incremento Absoluto"] / df["Nivel Tecnológico 2024"]) * 100).round(1)
-df.loc[df["Nivel Tecnológico 2024"] == 0, "Incremento Relativo (%)"] = 0 # Manejar división por cero
+# Manejar división por cero en el cálculo del incremento relativo
+df["Incremento Relativo (%)"] = df.apply(
+    lambda row: ((row["Incremento Absoluto"] / row["Nivel Tecnológico 2024"]) * 100).round(1)
+    if row["Nivel Tecnológico 2024"] != 0 else 0, axis=1
+)
+
 
 # --- MÉTRICAS GLOBALES ---
 st.header("📊 Resumen General")
@@ -59,7 +62,6 @@ st.write("---")
 st.header("📈 Comparativa Tecnológica por Distrito")
 
 # st.bar_chart es más simple y toma directamente el DataFrame.
-# Para comparar 2024 y 2025 por distrito, necesitamos configurar el DataFrame adecuadamente.
 # Primero, ordenamos el DataFrame para que el gráfico tenga un orden lógico
 df_chart = df.set_index("Distrito").sort_values(by="Nivel Tecnológico 2025", ascending=False)
 
@@ -106,11 +108,20 @@ st.write("---")
 st.header("📋 Datos Completos")
 st.write("Explora la tabla interactiva de todos los distritos.")
 
-# Opciones de ordenamiento
+# Columnas disponibles para ordenar (excluyendo "Distrito")
+# ¡¡¡ESTA ES LA PARTE CORREGIDA!!!
+sortable_columns = [col for col in df.columns if col != "Distrito"]
+
+# Encontrar el índice de "Incremento Relativo (%)" dentro de esta nueva lista
+try:
+    default_sort_index = sortable_columns.index("Incremento Relativo (%)")
+except ValueError:
+    default_sort_index = 0 # Si no se encuentra, usa la primera columna por defecto
+
 sort_column = st.selectbox(
     "Ordenar por:",
-    df.columns[1:],
-    index=df.columns.get_loc("Incremento Relativo (%)")
+    options=sortable_columns, # Aquí pasamos la lista 'sortable_columns' como options
+    index=default_sort_index # Aquí pasamos el índice correcto dentro de esa lista
 )
 sort_order = st.radio("Orden:", ("Ascendente", "Descendente"))
 
