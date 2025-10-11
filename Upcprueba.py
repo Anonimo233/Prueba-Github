@@ -15,7 +15,7 @@ distritos = [
     "Ate", "Santiago de Surco", "Callao", "Los Olivos"
 ]
 
-# 🔹 Generar datos aleatorios
+# 🔹 Generar datos aleatorios simulados
 seg_2024 = [random.randint(40, 80) for _ in distritos]
 seg_2025 = [random.randint(50, 95) for _ in distritos]
 
@@ -26,16 +26,16 @@ df = pd.DataFrame({
     "Seguridad_2025": seg_2025
 })
 
-# Calcular incremento (%)
+# Calcular incremento porcentual
 df["Incremento (%)"] = ((df["Seguridad_2025"] - df["Seguridad_2024"]) / df["Seguridad_2024"] * 100).round(1)
 
 # 🔹 Selector de distrito
 distrito_sel = st.selectbox("Selecciona un distrito:", df["Distrito"])
 
-# Buscar fila correspondiente
+# Fila del distrito seleccionado
 fila = df[df["Distrito"] == distrito_sel].iloc[0]
 
-# Mostrar métrica
+# Mostrar métrica con delta
 st.metric(
     label=f"Índice de seguridad 2025 en {distrito_sel}",
     value=f"{fila['Seguridad_2025']}/100",
@@ -53,5 +53,5 @@ fig = px.bar(
 )
 st.plotly_chart(fig, use_container_width=True)
 
-# ✅ Línea corregida
+# Pie de página
 st.caption("📊 Datos simulados — versión demostrativa")
