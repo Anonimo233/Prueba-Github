@@ -44,4 +44,4 @@ fig = px.bar(
 )
 st.plotly_chart(fig, use_container_width=True)
 
-st.caption("📊 Datos simulados — versión demostrativa")
+st.caption("📊 Datos simulados — versión 
