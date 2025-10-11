@@ -52,29 +52,43 @@ st.metric(
 )
 
 
-# --- VISUALIZACIÓN GENERAL (versión sin Plotly) ---
+# --- VISUALIZACIÓN GENERAL (Matplotlib, versión robusta) ---
+import matplotlib.pyplot as plt
+import numpy as np
 
 st.subheader("📊 Visualización general")
 
-# Crear figura y ejes
-ax.bar(df["Distrito"], df["Tecnología 2024"], width=0.4, label="2024", color="#636EFA")
-ax.bar(df["Distrito"], df["Tecnología 2025"], width=0.4, label="2025", color="#00CC96", alpha=0.8)
+# Asegurarnos que las columnas sean numéricas
+df["Tecnología 2024"] = pd.to_numeric(df["Tecnología 2024"], errors="coerce").fillna(0)
+df["Tecnología 2025"] = pd.to_numeric(df["Tecnología 2025"], errors="coerce").fillna(0)
 
-# Mejoras visuales
-ax.set_title("Comparativa del nivel tecnológico por distrito (2024 vs 2025)", fontsize=12)
+# Posiciones X numéricas
+n = len(df)
+x = np.arange(n)
+width = 0.35
+
+fig, ax = plt.subplots(figsize=(12, 5))
+
+# Barras 2024 y 2025 desplazadas
+ax.bar(x - width/2, df["Tecnología 2024"].values, width=width, label="2024", color="#636EFA")
+ax.bar(x + width/2, df["Tecnología 2025"].values, width=width, label="2025", color="#00CC96", alpha=0.9)
+
+# Etiquetas y formato
+ax.set_xticks(x)
+ax.set_xticklabels(df["Distrito"].values, rotation=45, ha="right", fontsize=9)
 ax.set_ylabel("Nivel tecnológico (0 - 100)")
+ax.set_title("Comparativa del nivel tecnológico por distrito (2024 vs 2025)")
 ax.legend()
-ax.grid(axis="y", linestyle="--", alpha=0.5)
-plt.xticks(rotation=45, ha="right")
+ax.grid(axis="y", linestyle="--", alpha=0.4)
 
-# Mostrar el gráfico en Streamlit
+plt.tight_layout()
 st.pyplot(fig)
 
-# Texto de resumen debajo
+# Resumen numérico debajo
 prom_2024 = df["Tecnología 2024"].mean()
 prom_2025 = df["Tecnología 2025"].mean()
-incremento = ((prom_2025 - prom_2024) / prom_2024) * 100
+incremento = ((prom_2025 - prom_2024) / prom_2024) * 100 if prom_2024 != 0 else 0
 
 st.markdown(f"📈 **Incremento promedio general:** {incremento:.1f}% entre 2024 y 2025.")
-st.markdown(f"💡 En promedio, los distritos de Lima Metropolitana mejoraron su nivel tecnológico de **{prom_2024:.1f}/100** a **{prom_2025:.1f}/100**.")
+st.markdown(f"💡 En promedio, los distritos de Lima Metropolitana pasaron de **{prom_2024:.1f}/100** a **{prom_2025:.1f}/100**.")
 
