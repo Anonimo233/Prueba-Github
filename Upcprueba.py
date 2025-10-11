@@ -23,7 +23,7 @@ distritos = [
     "San Juan de Lurigancho", "San Martín de Porres", "Villa El Salvador",
     "Ate", "Santiago de Surco", "Callao", "Los Olivos", "Chorrillos",
     "Surquillo", "Barranco", "Magdalena del Mar", "Pueblo Libre", "Jesús María",
-    "Lince", "San Borja", "Breña", "Pueblo Libre", "San Miguel"
+    "Lince", "San Borja", "Breña", "San Miguel"
 ]
 # Aseguramos que los valores no superen 100 y haya un incremento razonable
 tec_2024 = [random.randint(30, 80) for _ in distritos]
@@ -36,7 +36,9 @@ df = pd.DataFrame({
 })
 
 df["Incremento Absoluto"] = df["Nivel Tecnológico 2025"] - df["Nivel Tecnológico 2024"]
+# Asegurarse de que el cálculo no divida por cero si Nivel Tecnológico 2024 es 0 (poco probable aquí)
 df["Incremento Relativo (%)"] = ((df["Incremento Absoluto"] / df["Nivel Tecnológico 2024"]) * 100).round(1)
+df.loc[df["Nivel Tecnológico 2024"] == 0, "Incremento Relativo (%)"] = 0 # Manejar división por cero
 
 # --- MÉTRICAS GLOBALES ---
 st.header("📊 Resumen General")
@@ -48,37 +50,21 @@ with col2:
     st.metric("Promedio 2025", f"{df['Nivel Tecnológico 2025'].mean():.1f}/100")
     st.progress(df['Nivel Tecnológico 2025'].mean() / 100)
 with col3:
-    # Asegurarse de que el delta_color se muestre correctamente
     st.metric("Incremento Promedio", f"{df['Incremento Relativo (%)'].mean():.1f}%",
-              delta=f"{df['Incremento Relativo (%)'].mean():.1f}%") # No siempre es bueno forzar 'normal', a veces 'inverse' o 'off'
+              delta=f"{df['Incremento Relativo (%)'].mean():.1f}%")
 
 st.write("---")
 
-# --- VISUALIZACIÓN DE DATOS con Matplotlib/Seaborn ---
+# --- VISUALIZACIÓN DE DATOS con st.bar_chart ---
 st.header("📈 Comparativa Tecnológica por Distrito")
 
-# Crear un DataFrame 'derretido' para Seaborn, si se quiere un gráfico de barras apiladas o agrupadas
-df_melted = df.melt(id_vars="Distrito", var_name="Año", value_vars=["Nivel Tecnológico 2024", "Nivel Tecnológico 2025"],
-                    value_name="Nivel Tecnológico")
+# st.bar_chart es más simple y toma directamente el DataFrame.
+# Para comparar 2024 y 2025 por distrito, necesitamos configurar el DataFrame adecuadamente.
+# Primero, ordenamos el DataFrame para que el gráfico tenga un orden lógico
+df_chart = df.set_index("Distrito").sort_values(by="Nivel Tecnológico 2025", ascending=False)
 
-# Crear el gráfico de barras agrupadas con Seaborn
-plt.figure(figsize=(12, 6))
-sns.barplot(
-    data=df_melted,
-    x="Distrito",
-    y="Nivel Tecnológico",
-    hue="Año",
-    palette="viridis", # Puedes cambiar la paleta de colores
-    order=df.sort_values(by="Nivel Tecnológico 2025", ascending=False)["Distrito"] # Ordenar por 2025
-)
-plt.ylabel("Nivel Tecnológico (/100)")
-plt.xlabel("Distrito")
-plt.title("Nivel de Uso de Tecnología (2024 vs 2025)")
-plt.xticks(rotation=45, ha='right') # Rotar etiquetas para que no se superpongan
-plt.ylim(0, 100) # Asegurar que el eje Y vaya de 0 a 100
-plt.tight_layout() # Ajustar el diseño para evitar recortes
-st.pyplot(plt) # Mostrar el gráfico en Streamlit
-plt.close() # Importante para liberar memoria y evitar que se muestren gráficos duplicados
+# st.bar_chart tomará las columnas especificadas como barras para cada índice (Distrito)
+st.bar_chart(df_chart[["Nivel Tecnológico 2024", "Nivel Tecnológico 2025"]], use_container_width=True)
 
 st.write("---")
 
@@ -100,7 +86,7 @@ if distrito_sel:
         st.metric(
             label="Nivel Tecnológico 2025",
             value=f"{fila['Nivel Tecnológico 2025']}/100",
-            delta=f"{fila['Incremento Absoluto']}" # Mostrar el incremento absoluto en el delta
+            delta=f"{fila['Incremento Absoluto']}"
         )
     with col_d3:
         st.metric(
@@ -111,7 +97,7 @@ if distrito_sel:
 
     # Gráfico de progreso para el distrito seleccionado
     st.subheader(f"Progreso Tecnológico en {distrito_sel}")
-    st.progress(int(fila['Nivel Tecnológico 2025'])) # El progress bar va de 0 a 100 por defecto
+    st.progress(int(fila['Nivel Tecnológico 2025']))
     st.caption(f"El nivel tecnológico de {distrito_sel} ha alcanzado un {fila['Nivel Tecnológico 2025']}% en 2025.")
 
 st.write("---")
@@ -123,7 +109,7 @@ st.write("Explora la tabla interactiva de todos los distritos.")
 # Opciones de ordenamiento
 sort_column = st.selectbox(
     "Ordenar por:",
-    df.columns[1:], # Excluir "Distrito" del ordenamiento inicial si quieres
+    df.columns[1:],
     index=df.columns.get_loc("Incremento Relativo (%)")
 )
 sort_order = st.radio("Orden:", ("Ascendente", "Descendente"))
@@ -132,12 +118,6 @@ sorted_df = df.sort_values(by=sort_column, ascending=(sort_order == "Ascendente"
 
 st.dataframe(sorted_df, use_container_width=True)
 
-# Puedes añadir una imagen o un pie de página
+# Puedes añadir un pie de página
 st.write("---")
 st.markdown("Desarrollado con ❤️ en Python y Streamlit")
-
-# Puedes añadir una imagen o un pie de página
-st.write("---")
-st.markdown("Desarrollado con ❤️ en Python y Streamlit")
-
-# Para que el modelo de imagen no falle
