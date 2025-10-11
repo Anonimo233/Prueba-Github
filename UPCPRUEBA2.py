@@ -51,10 +51,32 @@ st.metric(
     delta=f"{fila['Incremento (%)']}%"
 )
 
-# --- VISUALIZACIONES ---
+
+# --- VISUALIZACIÓN GENERAL (versión sin Plotly) ---
+import matplotlib.pyplot as plt
+
 st.subheader("📊 Visualización general")
 
-# Mostrar gráficos lado a lado
-col_g1, col_g2 = st.columns(2)
+# Crear figura y ejes
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.bar(df["Distrito"], df["Tecnología 2024"], width=0.4, label="2024", color="#636EFA")
+ax.bar(df["Distrito"], df["Tecnología 2025"], width=0.4, label="2025", color="#00CC96", alpha=0.8)
 
+# Mejoras visuales
+ax.set_title("Comparativa del nivel tecnológico por distrito (2024 vs 2025)", fontsize=12)
+ax.set_ylabel("Nivel tecnológico (0 - 100)")
+ax.legend()
+ax.grid(axis="y", linestyle="--", alpha=0.5)
+plt.xticks(rotation=45, ha="right")
+
+# Mostrar el gráfico en Streamlit
+st.pyplot(fig)
+
+# Texto de resumen debajo
+prom_2024 = df["Tecnología 2024"].mean()
+prom_2025 = df["Tecnología 2025"].mean()
+incremento = ((prom_2025 - prom_2024) / prom_2024) * 100
+
+st.markdown(f"📈 **Incremento promedio general:** {incremento:.1f}% entre 2024 y 2025.")
+st.markdown(f"💡 En promedio, los distritos de Lima Metropolitana mejoraron su nivel tecnológico de **{prom_2024:.1f}/100** a **{prom_2025:.1f}/100**.")
 
