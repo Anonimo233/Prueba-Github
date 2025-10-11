@@ -54,15 +54,6 @@ st.metric(
 # --- VISUALIZACIONES ---
 st.subheader("📊 Visualización general")
 
-# Gráfico circular (promedios)
-fig_pie = px.pie(
-    names=["Tecnología 2024", "Tecnología 2025"],
-    values=[df["Tecnología 2024"].mean(), df["Tecnología 2025"].mean()],
-    title="Promedio general de tecnología (2024 vs 2025)",
-    color_discrete_sequence=px.colors.sequential.Teal
-)
-fig_pie.update_traces(textinfo="label+percent", pull=[0, 0.1])
-
 # Mostrar gráficos lado a lado
 col_g1, col_g2 = st.columns(2)
 col_g1.plotly_chart(fig_bar, use_container_width=True)
